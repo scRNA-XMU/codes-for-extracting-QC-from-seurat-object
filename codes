@@ -1,0 +1,28 @@
+
+#just need a seurat_object
+
+QCReport <- function(metadata){
+  samplefactor <- factor(metadata$orig.ident)
+  result <- cbind(tapply(metadata$nCount_RNA, samplefactor, length),
+                  tapply(metadata$nFeature_RNA, samplefactor, mean),
+                  tapply(metadata$nFeature_RNA, samplefactor, median),
+                  tapply(metadata$nFeature_RNA, samplefactor, max),
+                  tapply(metadata$nFeature_RNA, samplefactor, min),
+                  tapply(metadata$nCount_RNA, samplefactor, mean),
+                  tapply(metadata$nCount_RNA, samplefactor, median),
+                  tapply(metadata$nCount_RNA, samplefactor, max),
+                  tapply(metadata$nCount_RNA, samplefactor, min))
+  colnames(result) <- c("number.cell",
+                        "mean.genes.per.cell",
+                        "median.genes.per.cell",
+                        "max.genes.per.cell",
+                        "min.genes.per.cell",
+                        "mean.UMI.counts.per.cell",
+                        "median.UMI.counts.per.cell",
+                        "max.UMI.counts.per.cell",
+                        "min.UMI.counts.per.cell")
+  return(result)
+}
+QC_filter <- QCReport(seurat_object@meta.data)
+
+write.csv(QC_filter, file = "QC.csv")
